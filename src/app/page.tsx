@@ -15,14 +15,31 @@ export default function Home() {
       "--scroll",
       Math.min(percentOfScreenheightScrolled * 100, 100).toString(),
     );
-    console.log(htmlElement.scrollTop, htmlElement.clientHeight)
   };
 
+
   useEffect(() => {
-    // if (window != undefined) {
-    //   setScrollbar()
-    //   window.addEventListener("scroll", setScrollbar);
-    // }
+    if (window != undefined) {
+      const observer = new IntersectionObserver(entries => {
+        for (let i = entries.length - 1; i >= 0; i--) {
+          const entry = entries[i];
+          if (entry.isIntersecting && entry.target instanceof HTMLElement) {
+            document.querySelectorAll("[data-img]").forEach(img => {
+              img.classList.remove("show");
+            });
+            const img = document.querySelector(entry.target.dataset.imgToShow as string);
+            img?.classList.add("show");
+            break;
+          }
+        }
+        console.log(entries[0].isIntersecting)
+      });
+      setScrollbar();
+      window.addEventListener("scroll", setScrollbar);
+      document.querySelectorAll("[data-img-to-show]").forEach(section => {
+        observer.observe(section)
+      })
+    }
   }, []);
 
   return (
@@ -34,9 +51,11 @@ export default function Home() {
           id='img-1'
           className='top-section-img show'
           alt=''
-        />
+          />
         <Image alt='' src={img2} data-img id='img-2' />
         <Image alt='' src={img3} data-img id='img-3' />
+          {/*
+      */}
       </div>
       <section className='top-section full-screen-section'>
         <div className='left'>
